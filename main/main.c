@@ -10,6 +10,7 @@
 #include "esp_err.h"
 #include "esp_log.h"
 #include "motor_control.h"
+#include "ble_comm.h"
 
 static const char *TAG = "APP_MAIN";
 
@@ -32,10 +33,12 @@ void app_main(void)
 
     /* Init motor driver */
     motor_init();
+    ble_init();
 
     /* Main loop: idle */
     while (1) 
     {
+        ble_send_notification("HEARTBEAT", 9);
         vTaskDelay(pdMS_TO_TICKS(1000)); /* 1 second */
     }
 }
