@@ -9,7 +9,7 @@
 #include "nvs_flash.h"
 #include "esp_err.h"
 #include "esp_log.h"
-#include "motor_control.h"
+#include "vehicle_control.h"
 #include "ble_comm.h"
 
 static const char *TAG = "APP_MAIN";
@@ -31,8 +31,7 @@ void app_main(void)
     ESP_ERROR_CHECK(ret);
     ESP_LOGI(TAG, "NVS initialized successfully");
 
-    /* Init motor driver */
-    motor_init();
+    vehicle_control_init();
     ble_init();
 
     /* Main loop: idle */

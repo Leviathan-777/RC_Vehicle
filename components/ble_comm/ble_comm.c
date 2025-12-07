@@ -16,9 +16,9 @@
 #include "nimble/nimble_port_freertos.h"
 
 #include "ble_comm.h"
-#include "motor_control.h"
+#include "vehicle_control.h"
 
-#define BLE_DEVICE_NAME "ESP32 Motor"
+#define BLE_DEVICE_NAME "ESP32 Vehicle"
 
 #define FORWARD_CMD 'F'
 #define REVERSE_CMD 'R'
@@ -26,6 +26,7 @@
 #define STOP_CMD    'S'
 #define LEFT_CMD    'L'
 #define RIGHT_CMD   'G'
+#define LIGHTS_CMD  'H'
 
 static const char *TAG = "BLE_COMMUNICATION";
 
@@ -81,47 +82,47 @@ static int ble_uart_rx_callback(uint16_t conn_handle,
         case FORWARD_CMD:
         {
             int speed = atoi(&incoming[1]);
-            motor_forward(MOTOR_A, speed);
-            motor_forward(MOTOR_B, speed);
+            moveForward(speed);
             ESP_LOGI(TAG, "Vehicle forward %d%%", speed);
             break;
         }
         case REVERSE_CMD:
         {
             int speed = atoi(&incoming[1]);
-            motor_reverse(MOTOR_A, speed);
-            motor_reverse(MOTOR_B, speed);
+            moveReverse(speed);
             ESP_LOGI(TAG, "Vehicle reverse %d%%", speed);
             break;
         }
         case LEFT_CMD:
         {
             int speed = atoi(&incoming[1]);
-            motor_reverse(MOTOR_A, speed);
-            motor_forward(MOTOR_B, speed);
+            turnLeft(speed);
             ESP_LOGI(TAG, "Vehicle left %d%%", speed);
             break;
         }
         case RIGHT_CMD:
         {
             int speed = atoi(&incoming[1]);
-            motor_reverse(MOTOR_B, speed);
-            motor_forward(MOTOR_A, speed);
+            turnRight(speed);
             ESP_LOGI(TAG, "Vehicle right %d%%", speed);
             break;
         }        
         case BRAKE_CMD:
         {
-            motor_brake(MOTOR_A);
-            motor_brake(MOTOR_B);
+            brakeVehicle();
             ESP_LOGI(TAG, "Vehicle brake");
             break;
         }
         case STOP_CMD:
         {
-            motor_stop(MOTOR_A);
-            motor_stop(MOTOR_B);
+            stopVehicle();
             ESP_LOGI(TAG, "Vehicle stop");
+            break;
+        }
+        case LIGHTS_CMD:
+        {
+            toggleLights();
+            ESP_LOGI(TAG, "Toggle lights");
             break;
         }
         default:
